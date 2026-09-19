@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
-
 public class MasterPasswordServices
 {
     private readonly AppDbContext database;
