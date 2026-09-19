@@ -3,9 +3,6 @@
 //when the user creates a master password, it will generate and store a new salt and derive a key from the master password and salt
 //if vault is created, it will ask the user to enter the master password and verify it against the stored hash and salt
 
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
-
 public class Program
 {
     public static void Main(string[] args)
@@ -21,19 +18,25 @@ public class Program
             string masterPassword = ReadPassword("Create a new master password: ");
             var masterPasswordServices = new MasterPasswordServices(database);
             masterPasswordServices.InitialiseMasterPassword(masterPassword);
+            Console.WriteLine("Vault created.");
         }
         else
         {
+            while (true)
+            {
             string masterPassword = ReadPassword("Enter master password:  ");
+
             if (Cryptography.VerifyPassword(masterPassword, database.VaultMetadata.First().Salt, database.VaultMetadata.First().PasswordVerificationHash))
             {
                 Console.WriteLine("Master password verified successfully.");
                 //decrypt the vault and allow the user to access the password manager
+                break;
             }
             else
             {
                 Console.WriteLine("Incorrect master password.");
             }
+        }
         }
     }
 

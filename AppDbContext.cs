@@ -6,13 +6,7 @@ public class AppDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        string dataFolder = Path.Combine(
-            Directory.GetCurrentDirectory(), "Data"
-        );
-
-    
-        
-        optionsBuilder.UseSqlite("Data Source=vault.db");
+        optionsBuilder.UseSqlite("Data Source=Data/vault.db");
     }
 }
 
