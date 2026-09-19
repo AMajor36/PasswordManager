@@ -29,24 +29,17 @@ public class Cryptography
     {
         return RandomNumberGenerator.GetBytes(saltSize);
     }
-/*
-    // Method to encrypt the password using the derived key
-    public static byte[] EncryptPassword(string clearPayload, byte[] derivedKey)
-    {
-        return unclearPayload;
-    }
     
-    // Method to decrypt the password using the derived key
-    public static string DecryptPassword(byte[] unclearPayload, byte[] derivedKey)
-    {
-        return clearPayload;
-    }
-*/
     // Method to verify the password by comparing the derived key with the stored hash
         public static bool VerifyPassword(string MasterPassword, byte [] salt, byte[] hash)
     {
         byte[] candidateKey = DeriveKey(MasterPassword, salt);
 
         return CryptographicOperations.FixedTimeEquals(candidateKey, hash);
+    }
+
+    public static byte[] CreateVaultKey(string masterPassword, byte[] salt)
+    {
+        return DeriveKey(masterPassword, salt);
     }
 }

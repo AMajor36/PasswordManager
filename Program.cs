@@ -15,41 +15,15 @@ public class Program
 
         if (!vaultExists)
         {
-            string masterPassword = ReadPassword("Create a new master password: ");
+            string masterPassword = VaultLockService.ReadPassword("Create a new master password: ");
             var masterPasswordServices = new MasterPasswordServices(database);
             masterPasswordServices.InitialiseMasterPassword(masterPassword);
             Console.WriteLine("Vault created.");
         }
         else
         {
-            while (true)
-            {
-            string masterPassword = ReadPassword("Enter master password:  ");
-
-            if (Cryptography.VerifyPassword(masterPassword, database.VaultMetadata.First().Salt, database.VaultMetadata.First().PasswordVerificationHash))
-            {
-                Console.WriteLine("Master password verified successfully.");
-                //decrypt the vault and allow the user to access the password manager
-                break;
-            }
-            else
-            {
-                Console.WriteLine("Incorrect master password.");
-            }
+            var vaultLockService = new VaultLockService(database);
+            vaultLockService.unlockVault();
         }
-        }
-    }
-
-    private static string ReadPassword(string prompt)
-    {
-        Console.Write(prompt);
-        string password = Console.ReadLine() ?? "";
-        if (string.IsNullOrEmpty(password))
-        {
-            Console.WriteLine("Password cannot be empty. Please try again.");
-            return ReadPassword(prompt);
-        }
-
-        return password;
     }
 }
