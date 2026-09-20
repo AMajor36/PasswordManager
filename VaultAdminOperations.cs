@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.VisualBasic;
-
 public class VaultLockService
 {
     private readonly AppDbContext database;
@@ -57,4 +54,28 @@ public class VaultLockService
     {
         return vaultIsLocked;
     }
+}
+
+public class AppInitialisation{
+    private readonly AppDbContext database;
+    public AppInitialisation(AppDbContext database){
+        this.database = database;
+    }
+    public void InitialiseOrUnlockVault()
+    {
+        bool vaultExists = database.VaultMetadata.Any();
+
+        if (!vaultExists)
+        {
+        string masterPassword = VaultLockService.ReadPassword("Create a new master password: ");
+        var masterPasswordServices = new MasterPasswordServices(database);
+        masterPasswordServices.InitialiseMasterPassword(masterPassword);
+        Console.WriteLine("Vault created.");
+        }
+        else
+        {
+            var vaultLockService = new VaultLockService(database);
+            vaultLockService.unlockVault();
+        }
+        }
 }
