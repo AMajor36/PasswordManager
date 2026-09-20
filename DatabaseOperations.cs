@@ -29,8 +29,15 @@ public class PasswordManagement
         database.SaveChanges();
     }
 
-    public void DeletePassword()
+    public void DeletePassword(int passwordId)
     {
+        var passwordEntry = database.VaultStorage.Find(passwordId);
+
+        if (passwordEntry is not null)
+        {
+            database.VaultStorage.Remove(passwordEntry);
+            database.SaveChanges();
+        }
         
     }
 
