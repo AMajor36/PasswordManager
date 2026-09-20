@@ -42,4 +42,21 @@ public class Cryptography
     {
         return DeriveKey(masterPassword, salt);
     }
+
+    public static byte[] Encrypt(byte[] plaintext, byte[] key, out byte[] iV)
+    {
+        iV = RandomNumberGenerator.GetBytes(ivSize);
+        byte [] ciphertext = new byte[plaintext.Length];
+        byte[] tag = new byte[tagSize];
+
+        using var aes = new AesGcm(key, tagSize);
+        aes.Encrypt(iV, plaintext, ciphertext, tag);
+
+        byte[] encryptedText = new byte[ciphertext.Length + tag.Length];
+        Buffer.BlockCopy(ciphertext, 0, encryptedText, 0, ciphertext.Length);
+        Buffer.BlockCopy(tag, 0, encryptedText, ciphertext.Length, tag.Length);
+
+        return encryptedText;
+
+    }
 }
