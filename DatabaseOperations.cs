@@ -41,12 +41,22 @@ public class PasswordManagement
         
     }
 
-    public void ChangePassword()
+    public void UpdatePassword(int passwordId, string newPassword)
     {
-        
+        byte[] vaultKey = vaultLockService.GetVaultKey();
+        var passwordEntry = database.VaultStorage.Find(passwordId);
+
+        if (passwordEntry is not null)
+        {
+            byte[] encryptedPassword = Cryptography.Encrypt(Encoding.UTF8.GetBytes(newPassword), vaultKey, out byte[] passwordIv);
+
+            passwordEntry.EncryptedPassword = encryptedPassword;
+            passwordEntry.PasswordIv = passwordIv;
+            database.SaveChanges();
+        }
     }
 
-    public void GetPassword()
+    public void GetPassword(int passwordId)
     {
         
     }
