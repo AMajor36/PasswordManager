@@ -54,7 +54,16 @@ public class VaultLockService
     {
         return vaultIsLocked;
     }
-}
+
+    public byte[] GetVaultKey(){
+        if (vaultIsLocked || vaultKey is null){
+            throw new InvalidOperationException("Vault is locked.");
+        }
+        
+        return vaultKey;
+        }
+    }
+
 
 public class AppInitialisation{
     private readonly AppDbContext database;
