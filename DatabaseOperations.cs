@@ -44,21 +44,27 @@ public class PasswordManagement
     public void UpdatePassword(int passwordId, string newPassword)
     {
         byte[] vaultKey = vaultLockService.GetVaultKey();
-        var passwordEntry = database.VaultStorage.Find(passwordId);
+        var passwordEntry = database.VaultStorage.Find(passwordId) ?? throw new InvalidOperationException("Password not found.");
 
-        if (passwordEntry is not null)
-        {
-            byte[] encryptedPassword = Cryptography.Encrypt(Encoding.UTF8.GetBytes(newPassword), vaultKey, out byte[] passwordIv);
+        byte[] encryptedPassword = Cryptography.Encrypt(Encoding.UTF8.GetBytes(newPassword), vaultKey, out byte[] passwordIv);
 
-            passwordEntry.EncryptedPassword = encryptedPassword;
-            passwordEntry.PasswordIv = passwordIv;
-            database.SaveChanges();
+        passwordEntry.EncryptedPassword = encryptedPassword;
+        passwordEntry.PasswordIv = passwordIv;
+        database.SaveChanges();
         }
-    }
-
-    public void GetPassword(int passwordId)
+    
+    public (string username, string password) GetPassword(int passwordId)
     {
-        
+        var passwordEntry = database.VaultStorage.Find(passwordId) ?? throw new InvalidOperationException("Password not found.");
+        byte[] vaultKey = vaultLockService.GetVaultKey();
+
+        byte[] decryptedUsernameBytes = Cryptography.Decrypt(passwordEntry.EncryptedUsername, vaultKey, passwordEntry.UsernameIv);
+        byte[] decryptedPasswordBytes = Cryptography.Decrypt(passwordEntry.EncryptedPassword, vaultKey, passwordEntry.PasswordIv);
+
+        string username = Encoding.UTF8.GetString(decryptedUsernameBytes);
+        string password = Encoding.UTF8.GetString(decryptedPasswordBytes);
+
+        return (username, password);
     }
 
     public void ListPasswords()

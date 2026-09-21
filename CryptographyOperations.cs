@@ -1,6 +1,7 @@
 using System.Text;
 using System.Security.Cryptography;
 
+//Stores all cryptography methods
 public class Cryptography
 {
     //variables for salt size, iterations, key size, IV size, and tag size
@@ -10,7 +11,7 @@ public class Cryptography
     private const int ivSize = 12;
     private const int tagSize = 16;
 
-    // Method to derive the key from the master password and salt
+    //Derives key from master password and salt
     public static byte[] DeriveKey(string masterPassword, byte[] salt)
     {
         byte[] derivedKey = Rfc2898DeriveBytes.Pbkdf2(
@@ -24,13 +25,13 @@ public class Cryptography
         return derivedKey;
     }
     
-    // Method to generate a new salt
+    //Generates a new salt and returns it
     public static byte[] GenerateNewSalt()
     {
         return RandomNumberGenerator.GetBytes(saltSize);
     }
     
-    // Method to verify the password by comparing the derived key with the stored hash
+    //Verifies the password by comparing the derived key with the stored hash
         public static bool VerifyPassword(string MasterPassword, byte [] salt, byte[] hash)
     {
         byte[] candidateKey = DeriveKey(MasterPassword, salt);
@@ -38,11 +39,13 @@ public class Cryptography
         return CryptographicOperations.FixedTimeEquals(candidateKey, hash);
     }
 
+    //Creates a new key and returns it
     public static byte[] CreateVaultKey(string masterPassword, byte[] salt)
     {
         return DeriveKey(masterPassword, salt);
     }
 
+    //Encrypts a serverice password and returns it
     public static byte[] Encrypt(byte[] plaintext, byte[] key, out byte[] iV)
     {
         iV = RandomNumberGenerator.GetBytes(ivSize);
@@ -53,10 +56,29 @@ public class Cryptography
         aes.Encrypt(iV, plaintext, ciphertext, tag);
 
         byte[] encryptedText = new byte[ciphertext.Length + tag.Length];
+
         Buffer.BlockCopy(ciphertext, 0, encryptedText, 0, ciphertext.Length);
         Buffer.BlockCopy(tag, 0, encryptedText, ciphertext.Length, tag.Length);
 
         return encryptedText;
 
+    }
+
+    //Decrypts a service password and returns it
+    public static byte[] Decrypt(byte[] encryptedText, byte[] key, byte[] iV)
+    {
+        int cyphertextLength = encryptedText.Length - tagSize;
+        byte[] ciphertext = new byte[cyphertextLength];
+        byte[] tag = new byte[tagSize];
+
+        Buffer.BlockCopy(encryptedText, 0, ciphertext, 0, ciphertext.Length);
+        Buffer.BlockCopy(encryptedText, ciphertext.Length, tag, 0, tag.Length);
+
+        byte[] plaintext = new byte[ciphertext.Length];
+
+        using var aes = new AesGcm(key, tagSize);
+        aes.Decrypt(iV, ciphertext, tag, plaintext);
+
+        return plaintext;
     }
 }
