@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text;
 public class PasswordManagement
 {
@@ -85,4 +86,22 @@ public class PasswordManagement
         return result;
         
     }
+
+
+    public string PasswordGenerator(int passwordLength)
+    {
+        const string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*-<>?";
+
+        var password = new StringBuilder(passwordLength);
+
+        for (int index = 0; index < passwordLength; index++)
+        {
+            int position = RandomNumberGenerator.GetInt32(characters.Length);
+            password.Append(characters[position]);
+        }
+
+        return password.ToString();
+    }
+
+
 }
