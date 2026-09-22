@@ -5,25 +5,15 @@
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static void Main()
     {
         using var database = new AppDbContext();
-
+        var vaultLockService = new VaultLockService(database);
+        var appInitialisation = new AppInitialisation(database, vaultLockService);
+        var passwordManagement = new PasswordManagement(database, vaultLockService);
+        
         database.Database.EnsureCreated();
-
-        bool vaultExists = database.VaultMetadata.Any();
-
-        if (!vaultExists)
-        {
-            string masterPassword = VaultLockService.ReadPassword("Create a new master password: ");
-            var masterPasswordServices = new MasterPasswordServices(database);
-            masterPasswordServices.InitialiseMasterPassword(masterPassword);
-            Console.WriteLine("Vault created.");
-        }
-        else
-        {
-            var vaultLockService = new VaultLockService(database);
-            vaultLockService.unlockVault();
-        }
+        appInitialisation.InitialiseOrUnlockVault();
+        passwordManagement.ListServiceNames();
     }
 }
