@@ -10,6 +10,7 @@ public class PasswordManagement
         this.vaultLockService = vaultLockService;
     }
 
+    // Creates a new password and saves encryped service name, username and passwored and their IV's to db
     public void CreatePassword(string serviceName, string username, string password)
     {
         byte[] vaultKey = vaultLockService.GetVaultKey();
@@ -30,6 +31,7 @@ public class PasswordManagement
         database.SaveChanges();
     }
 
+    // Deletes selected password and saves to db
     public void DeletePassword(int passwordId)
     {
         var passwordEntry = database.VaultStorage.Find(passwordId);
@@ -42,6 +44,7 @@ public class PasswordManagement
         
     }
 
+    // Updates a selected password and saves the new encrpyted password and IV to db
     public void UpdatePassword(int passwordId, string newPassword)
     {
         byte[] vaultKey = vaultLockService.GetVaultKey();
@@ -54,6 +57,7 @@ public class PasswordManagement
         database.SaveChanges();
         }
     
+    // Decrypts the selected row and returns them
     public (string username, string password) GetPassword(int passwordId)
     {
         var passwordEntry = database.VaultStorage.Find(passwordId) ?? throw new InvalidOperationException("Password not found.");
@@ -68,6 +72,7 @@ public class PasswordManagement
         return (username, password);
     }
 
+    // Decrypts service names and exposes row ID's and returns them for UI handling
     public List<(int Id, string ServiceName)> ListServiceNames()
     {
         var entries = database.VaultStorage.ToList();
@@ -87,9 +92,13 @@ public class PasswordManagement
         
     }
 
-
+    // Generates a random string with customer length between 4 and 100 characters including lowercase and uppercase letters, numbers and symbols and returns it
     public string PasswordGenerator(int passwordLength)
     {
+        if (passwordLength < 4 || passwordLength > 100)
+        {
+            throw new InvalidOperationException("Password length must be between 4 and 100 characters.");
+        }
         const string characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*-<>?";
 
         var password = new StringBuilder(passwordLength);
