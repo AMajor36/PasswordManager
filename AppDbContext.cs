@@ -21,8 +21,10 @@ public class VaultMetadata
 public class VaultStorage
 {
     public int Id { get; set; }
-    public required string ServiceName { get; set; }
-    public required string Username { get; set; }
+    public required byte[] EncryptedServiceName { get; set; }
+    public required byte[] ServiceNameIv { get; set; }
+    public required byte[] EncryptedUsername { get; set; }
+    public required byte[] UsernameIv { get; set; }
     public required byte[] EncryptedPassword { get; set; }
-    public required byte[] Iv { get; set; }
+    public required byte[] PasswordIv { get; set; }
 }

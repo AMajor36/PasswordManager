@@ -20,25 +20,4 @@ public class MasterPasswordServices
         );
         database.SaveChanges();
     }
-
-
-/*
-    public void ChangeMasterPassword()
-    {
-        string oldMasterPassword = Console.WriteLine("Enter master password: ");
-        if (Cryptography.VerifyPassword(oldMasterPassword, database.VaultMetadata.First().Salt, database.VaultMetadata.First().PasswordVerificationHash))
-        {
-            Console.WriteLine("Enter a new password: ")
-            InitialiseMasterPassword(newMasterPassword);
-        }
-
-    }
-*/
-
-
-
-
-
-
-
 }
