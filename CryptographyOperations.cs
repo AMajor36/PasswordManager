@@ -32,10 +32,10 @@ public class Cryptography
     }
     
     //Verifies the password by comparing the derived key with the stored hash
-        public static bool VerifyPassword(string MasterPassword, byte [] salt, byte[] hash)
+    public static bool VerifyPassword(string MasterPassword, byte [] salt, byte[] hash)
     {
         byte[] candidateKey = DeriveKey(MasterPassword, salt);
-
+        
         return CryptographicOperations.FixedTimeEquals(candidateKey, hash);
     }
 

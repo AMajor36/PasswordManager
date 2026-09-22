@@ -57,11 +57,12 @@ public class AppInitialisation
     }
     public bool CheckVault()
     {
-        return database.VaultMetadata.Any();
-    }
-        public void InitialiseVault(string masterPassword)
-    {
-        var masterPasswordServices = new MasterPasswordServices(database);
+        bool vaultExists = database.VaultMetadata.Any();
+
+        if (!vaultExists)
+        {
+        string masterPassword = VaultLockService.ReadPassword("Create a new master password: ");
+        var masterPasswordServices = new MasterPasswordServices(database, vaultLockService);
         masterPasswordServices.InitialiseMasterPassword(masterPassword);
 
         Console.WriteLine("Vault created.");
