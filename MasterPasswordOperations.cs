@@ -29,6 +29,14 @@ public class MasterPasswordServices
     {
         var metadata = database.VaultMetadata.First();
 
+        if (string.IsNullOrEmpty(oldMasterPassword)){
+            throw new InvalidOperationException("Master password cannot be empty");
+        }
+
+        if (string.IsNullOrEmpty(newMasterPassword)){
+            throw new InvalidOperationException("New master password cannot be empty");
+        }
+
         if (!Cryptography.VerifyPassword(oldMasterPassword, metadata.Salt, metadata.PasswordVerificationHash))
         {
             throw new InvalidOperationException("Incorrect master password.");  
