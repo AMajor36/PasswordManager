@@ -67,8 +67,22 @@ public class PasswordManagement
         return (username, password);
     }
 
-    public void ListPasswords()
+    public List<(int Id, string ServiceName)> ListServiceNames()
     {
+        var entries = database.VaultStorage.ToList();
+        var result = new List<(int Id, string ServiceName)>();
+
+        byte[] vaultKey = vaultLockService.GetVaultKey();
+
+        foreach (var entry in entries)
+        {
+            byte[] decryptedServiceNameBytes = Cryptography.Decrypt(entry.EncryptedServiceName, vaultKey, entry.ServiceNameIv);
+
+            string serviceName = Encoding.UTF8.GetString(decryptedServiceNameBytes);
+            result.Add((entry.Id, serviceName));
+        }
+        
+        return result;
         
     }
 }
