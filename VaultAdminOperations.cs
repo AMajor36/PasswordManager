@@ -17,40 +17,19 @@ public class VaultLockService
         Console.WriteLine("Vault locked.");
     }
 
-    public void UnlockVault(string? masterPassword = null)
+    public void UnlockVault(string masterPassword)
     {
-            while (true)
-            {
-                if (string.IsNullOrEmpty(masterPassword))
-                {
-                    masterPassword = ReadPassword("Enter master password: ");
-                }
-
-            if (Cryptography.VerifyPassword(masterPassword, database.VaultMetadata.First().Salt, database.VaultMetadata.First().PasswordVerificationHash))
-            {
-                //decrypt the vault and allow the user to access the password manager
-                vaultKey = Cryptography.CreateVaultKey(masterPassword, database.VaultMetadata.First().Salt);
-                vaultIsLocked = false;
-                Console.WriteLine("Vault unlocked.");
-                break;
-            }
-            else
-            {
-                Console.WriteLine("Incorrect master password.");
-            }
-        }
-    }
-    public static string ReadPassword(string prompt)
-    {
-        Console.Write(prompt);
-        string password = Console.ReadLine() ?? "";
-        if (string.IsNullOrEmpty(password))
+        if (Cryptography.VerifyPassword(masterPassword, database.VaultMetadata.First().Salt, database.VaultMetadata.First().PasswordVerificationHash))
         {
-            Console.WriteLine("Password cannot be empty. Please try again.");
-            return ReadPassword(prompt);
+        //decrypt the vault and allow the user to access the password manager
+        vaultKey = Cryptography.CreateVaultKey(masterPassword, database.VaultMetadata.First().Salt);
+        vaultIsLocked = false;
+        Console.WriteLine("Vault unlocked.");
         }
-
-        return password;
+        else
+        {
+            throw new InvalidOperationException("Incorrect master password.");
+        }
     }
 
     public bool isLocked()
@@ -76,22 +55,16 @@ public class AppInitialisation
         this.database = database;
         this.vaultLockService = vaultLockService;
     }
-    public void InitialiseOrUnlockVault()
+    public bool CheckVault()
     {
-        bool vaultExists = database.VaultMetadata.Any();
-
-        if (!vaultExists)
-        {
-        string masterPassword = VaultLockService.ReadPassword("Create a new master password: ");
+        return database.VaultMetadata.Any();
+    }
+        public void InitialiseVault(string masterPassword)
+    {
         var masterPasswordServices = new MasterPasswordServices(database);
         masterPasswordServices.InitialiseMasterPassword(masterPassword);
 
         Console.WriteLine("Vault created.");
         vaultLockService.UnlockVault(masterPassword);
-        }
-        else
-        {
-            vaultLockService.UnlockVault();
-        }
-        }
+    }
 }

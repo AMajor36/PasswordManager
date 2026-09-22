@@ -8,7 +8,6 @@
         var passwordManagement = new PasswordManagement(database, vaultLockService);
         
         database.Database.EnsureCreated();
-        appInitialisation.InitialiseOrUnlockVault();
         passwordManagement.ListServiceNames();
     }
 }
