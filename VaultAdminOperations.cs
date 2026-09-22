@@ -83,7 +83,7 @@ public class AppInitialisation
         if (!vaultExists)
         {
         string masterPassword = VaultLockService.ReadPassword("Create a new master password: ");
-        var masterPasswordServices = new MasterPasswordServices(database);
+        var masterPasswordServices = new MasterPasswordServices(database, vaultLockService);
         masterPasswordServices.InitialiseMasterPassword(masterPassword);
 
         Console.WriteLine("Vault created.");
