@@ -44,6 +44,23 @@ public class VaultLockService
         
         return vaultKey;
         }
+
+    public void resetDeleteVault(string masterPassword)
+    {
+       
+       if (Cryptography.VerifyPassword(masterPassword, database.VaultMetadata.First().Salt, database.VaultMetadata.First().PasswordVerificationHash))
+        {
+            database.VaultStorage.RemoveRange(database.VaultStorage);
+            database.VaultMetadata.RemoveRange(database.VaultMetadata);
+            database.SaveChanges();
+            lockVault();
+        }
+        else
+        {
+            throw new InvalidOperationException("");
+        }
+
+    }
 }
 
 
@@ -67,5 +84,6 @@ public class AppInitialisation
 
         Console.WriteLine("Vault created.");
         vaultLockService.UnlockVault(masterPassword);
+    }
     }
 }

@@ -2,8 +2,8 @@ using Microsoft.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
 {
-    public DbSet<VaultMetadata> VaultMetadata { get; set; }
-    public DbSet<VaultStorage> VaultStorage { get; set; }
+    public DbSet<VaultMetadata> VaultMetadata { get; set; } = null!;
+    public DbSet<VaultStorage> VaultStorage { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
