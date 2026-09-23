@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+
 public class PasswordManagement
 {
     private readonly AppDbContext database;
