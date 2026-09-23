@@ -14,13 +14,11 @@ public class Cryptography
     //Derives key from master password and salt
     public static byte[] DeriveKey(string masterPassword, byte[] salt)
     {
-        byte[] derivedKey = Rfc2898DeriveBytes.Pbkdf2(
-        Encoding.UTF8.GetBytes(masterPassword), 
+        byte[] derivedKey = Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(masterPassword), 
         salt, 
         iterations, 
         HashAlgorithmName.SHA256, 
-        keySize
-        );
+        keySize);
 
         return derivedKey;
     }

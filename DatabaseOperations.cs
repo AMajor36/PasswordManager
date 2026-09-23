@@ -14,9 +14,21 @@ public class PasswordManagement
     public void CreatePassword(string serviceName, string username, string password)
     {
         byte[] vaultKey = vaultLockService.GetVaultKey();
-        byte[] encryptedServiceName = Cryptography.Encrypt(Encoding.UTF8.GetBytes(serviceName), vaultKey, out byte[] serviceNameIv);
-        byte[] encryptedUsername = Cryptography.Encrypt(Encoding.UTF8.GetBytes(username), vaultKey, out byte[] usernameIv);
-        byte[] encryptedPassword = Cryptography.Encrypt(Encoding.UTF8.GetBytes(password), vaultKey, out byte[] passwordIv);
+
+        byte[] encryptedServiceName = Cryptography.Encrypt(Encoding.UTF8.GetBytes(serviceName), 
+        vaultKey, 
+        out byte[] 
+        serviceNameIv);
+
+        byte[] encryptedUsername = Cryptography.Encrypt(Encoding.UTF8.GetBytes(username), 
+        vaultKey, 
+        out byte[] 
+        usernameIv);
+
+        byte[] encryptedPassword = Cryptography.Encrypt(Encoding.UTF8.GetBytes(password), 
+        vaultKey, 
+        out byte[] 
+        passwordIv);
 
         database.VaultStorage.Add(new VaultStorage
         {
@@ -28,6 +40,7 @@ public class PasswordManagement
             PasswordIv = passwordIv,
         }
         );
+
         database.SaveChanges();
     }
 
@@ -50,12 +63,16 @@ public class PasswordManagement
         byte[] vaultKey = vaultLockService.GetVaultKey();
         var passwordEntry = database.VaultStorage.Find(passwordId) ?? throw new InvalidOperationException("Password not found.");
 
-        byte[] encryptedPassword = Cryptography.Encrypt(Encoding.UTF8.GetBytes(newPassword), vaultKey, out byte[] passwordIv);
+        byte[] encryptedPassword = Cryptography.Encrypt(Encoding.UTF8.GetBytes(newPassword), 
+        vaultKey, 
+        out byte[] 
+        passwordIv);
 
         passwordEntry.EncryptedPassword = encryptedPassword;
         passwordEntry.PasswordIv = passwordIv;
+
         database.SaveChanges();
-        }
+    }
     
     // Decrypts the selected row and returns them
     public (string username, string password) GetPassword(int passwordId)
@@ -63,8 +80,13 @@ public class PasswordManagement
         var passwordEntry = database.VaultStorage.Find(passwordId) ?? throw new InvalidOperationException("Password not found.");
         byte[] vaultKey = vaultLockService.GetVaultKey();
 
-        byte[] decryptedUsernameBytes = Cryptography.Decrypt(passwordEntry.EncryptedUsername, vaultKey, passwordEntry.UsernameIv);
-        byte[] decryptedPasswordBytes = Cryptography.Decrypt(passwordEntry.EncryptedPassword, vaultKey, passwordEntry.PasswordIv);
+        byte[] decryptedUsernameBytes = Cryptography.Decrypt(passwordEntry.EncryptedUsername, 
+        vaultKey, 
+        passwordEntry.UsernameIv);
+
+        byte[] decryptedPasswordBytes = Cryptography.Decrypt(passwordEntry.EncryptedPassword, 
+        vaultKey, 
+        passwordEntry.PasswordIv);
 
         string username = Encoding.UTF8.GetString(decryptedUsernameBytes);
         string password = Encoding.UTF8.GetString(decryptedPasswordBytes);
@@ -81,7 +103,9 @@ public class PasswordManagement
 
         foreach (var entry in entries)
         {
-            byte[] decryptedServiceNameBytes = Cryptography.Decrypt(entry.EncryptedServiceName, vaultKey, entry.ServiceNameIv);
+            byte[] decryptedServiceNameBytes = Cryptography.Decrypt(entry.EncryptedServiceName, 
+            vaultKey, 
+            entry.ServiceNameIv);
 
             string serviceName = Encoding.UTF8.GetString(decryptedServiceNameBytes);
             result.Add((entry.Id, serviceName));
