@@ -54,7 +54,6 @@ public class PasswordManagement
             database.VaultStorage.Remove(passwordEntry);
             database.SaveChanges();
         }
-        
     }
 
     // Updates a selected password and saves the new encrpyted password and IV to db
@@ -112,7 +111,6 @@ public class PasswordManagement
         }
         
         return result;
-        
     }
 
     // Generates a random string with customer length between 4 and 100 characters including lowercase and uppercase letters, numbers and symbols and returns it
@@ -134,6 +132,4 @@ public class PasswordManagement
 
         return password.ToString();
     }
-
-
 }

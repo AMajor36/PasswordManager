@@ -62,7 +62,7 @@ public class VaultLockService
         {
             database.VaultStorage.RemoveRange(database.VaultStorage);
             database.VaultMetadata.RemoveRange(database.VaultMetadata);
-            
+
             database.SaveChanges();
             lockVault();
         }
@@ -70,10 +70,8 @@ public class VaultLockService
         {
             throw new InvalidOperationException("");
         }
-
     }
 }
-
 
 public class AppInitialisation
 {

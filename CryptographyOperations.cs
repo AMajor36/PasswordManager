@@ -59,7 +59,6 @@ public class Cryptography
         Buffer.BlockCopy(tag, 0, encryptedText, ciphertext.Length, tag.Length);
 
         return encryptedText;
-
     }
 
     //Decrypts a service password and returns it

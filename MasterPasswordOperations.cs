@@ -86,8 +86,7 @@ public class MasterPasswordServices
         newSalt);
 
         database.SaveChanges();
-        
+
         vaultLockService.lockVault();
-        
     }
 }
