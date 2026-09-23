@@ -4,4 +4,3 @@ obj/
 *.user
 *.db
 appsettings.json
-vault.db
