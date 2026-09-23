@@ -75,10 +75,9 @@ public class PasswordManagement
     // Decrypts service names and exposes row ID's and returns them for UI handling
     public List<(int Id, string ServiceName)> ListServiceNames()
     {
+        byte[] vaultKey = vaultLockService.GetVaultKey();
         var entries = database.VaultStorage.ToList();
         var result = new List<(int Id, string ServiceName)>();
-
-        byte[] vaultKey = vaultLockService.GetVaultKey();
 
         foreach (var entry in entries)
         {

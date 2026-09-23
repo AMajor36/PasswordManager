@@ -47,7 +47,6 @@ public class VaultLockService
 
     public void resetDeleteVault(string masterPassword)
     {
-       
        if (Cryptography.VerifyPassword(masterPassword, database.VaultMetadata.First().Salt, database.VaultMetadata.First().PasswordVerificationHash))
         {
             database.VaultStorage.RemoveRange(database.VaultStorage);
@@ -76,14 +75,16 @@ public class AppInitialisation
     {
         bool vaultExists = database.VaultMetadata.Any();
 
-        if (!vaultExists)
-        {
-        string masterPassword = VaultLockService.ReadPassword("Create a new master password: ");
+        return vaultExists;
+    }
+
+    public void CreateVault(string newMasterPassword)
+    {
         var masterPasswordServices = new MasterPasswordServices(database, vaultLockService);
-        masterPasswordServices.InitialiseMasterPassword(masterPassword);
+        masterPasswordServices.InitialiseMasterPassword(newMasterPassword);
 
         Console.WriteLine("Vault created.");
-        vaultLockService.UnlockVault(masterPassword);
-    }
+        vaultLockService.UnlockVault(newMasterPassword);
     }
 }
+
